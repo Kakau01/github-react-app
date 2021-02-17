@@ -1,5 +1,6 @@
-import React, { FormEvent, HTMLProps, useState } from 'react';
+import React, { FormEvent, HTMLProps, useEffect, useState } from 'react';
 import { FiChevronRight } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 import Logo from '../../img/logo-github.svg';
 import api from '../../services/api';
@@ -14,9 +15,30 @@ export interface Repositorys {
     }
 }
 
-const Home: React.FC<Repositorys> = () => {
+
+
+
+const Home: React.FC = () => {
     const [repoValue, setRepoValue] = useState('');
-    const [repositories, setRepositories] = useState<Repositorys[]>([]);
+    //Para manter os valores no LocalStorage
+    const [repositories, setRepositories] = useState<Repositorys[]>(() => {
+        //pega o valor da chave 
+        const storageRepositories = localStorage.getItem("@githubexplorer");
+        
+        // Se a chave existir fica gravado no storage se nao retorna array vazia
+        if(storageRepositories) {
+            
+            return JSON.parse(storageRepositories);
+        }else {
+            return []
+        }
+    });
+
+
+    useEffect(() => {
+        localStorage.setItem("@githubexplorer", JSON.stringify(repositories));
+    }, [repositories]);
+
 
     async function handleAddRepository(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -58,7 +80,8 @@ const Home: React.FC<Repositorys> = () => {
 
             <Repositories>
                 {repositories.map((rep, index) => (
-                    <a key={index} href={`repo/${repoValue}`}>
+                    //Vai para a pagina repository/nomedorepositorio
+                    <Link key={index} to={`repository/${rep.full_name}`}>
                         <img src={rep.owner.avatar_url} alt={rep.owner.login} />
 
                         <div>
@@ -68,7 +91,7 @@ const Home: React.FC<Repositorys> = () => {
 
 
                         <FiChevronRight size={40} />
-                    </a>
+                    </Link>
 
                 ))}
 
