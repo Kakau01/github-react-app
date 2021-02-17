@@ -11,7 +11,8 @@ const Routes: React.FC = () => {
 
         <Switch>
             <Route path="/" exact component={Home} />
-            <Route path="/repo" component={Repository} />
+            {/* Adicionando o restante dos parametros */}
+            <Route path="/repository/:repository+" component={Repository} />
         </Switch>
         
     )
