@@ -1,3 +1,5 @@
+import 'react-toastify/dist/ReactToastify.css';
+
 import { createGlobalStyle } from 'styled-components';
 
 import GitHubImage from '../img/github-background.svg';
@@ -25,6 +27,7 @@ export default createGlobalStyle `
         max-width:968px;
         margin: 0 auto;
         padding: 40px 20px;
+        
     }
 
 `

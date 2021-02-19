@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { FiChevronRight, FiChevronsLeft } from 'react-icons/fi';
+import Loader from 'react-loader-spinner';
 import { Link, useRouteMatch } from 'react-router-dom';
 
 import Logo from '../../img/logo-github.svg';
 import api from '../../services/api';
-import { Header, Issue, RepositoryInfo } from './style';
+import { Header, Issue, Loading, RepositoryInfo } from './style';
 
 //parametro da rota repository - URL
 
@@ -36,9 +37,17 @@ interface Issues {
     }
 }
 
+interface LoadingProps {
+    load: boolean
+}
+
+
+
 //Propriedes referentes as issues
 
 const Repository: React.FC = (props) => {
+    const [load, setLoad] = useState(true);
+
     //Esta ligado com o repositorio
     const [repository, setRepository] = useState<Repositorie | null>(null);
 
@@ -48,11 +57,14 @@ const Repository: React.FC = (props) => {
     const [issues, setIssues] = useState<Issues[]>([]);
 
     useEffect(() => {
+
         //chamada na api para pegar infos do repositorio
         api.get(`repos/${params.repository}`).then(
             response => {
                 //atualiza o repositorio
                 setRepository(response.data);
+                setLoad(false);
+
             }
         )
 
@@ -60,6 +72,9 @@ const Repository: React.FC = (props) => {
             response => {
                 //atualiza a issue
                 setIssues(response.data);
+                setLoad(false);
+
+
             }
         )
 
@@ -89,7 +104,7 @@ const Repository: React.FC = (props) => {
             </Header>
 
 
-            {repository && (
+            {repository && !load ? (
 
                 <RepositoryInfo>
                     <header>
@@ -115,13 +130,13 @@ const Repository: React.FC = (props) => {
                     </ul>
                 </RepositoryInfo>
 
-            )}
+            ) : (<Loading><Loader type="ThreeDots" color="#000" /></Loading>)}
 
 
             <Issue>
                 {issues.map(
                     issue => (
-                        <a 
+                        <a
                             key={issue.id}
                             onClick={() => openTab(issue.html_url)}
                         >
